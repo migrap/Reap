@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 
 namespace Reap.Newtonsoft.Json {
@@ -15,24 +14,17 @@ namespace Reap.Newtonsoft.Json {
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer) {
-            var dictionary = new Dictionary<string, object>();
-            serializer.Populate(reader, dictionary);
-
+            var name = (string)null;
             var message = new Message();
 
-            foreach(var item in dictionary) {
-                var descriptor = _extensions.Extensions.First(x => item.Key.Equals(x.ExtensionName, StringComparison.OrdinalIgnoreCase));
-                var extension = (object)null;
-                var converter = serializer.Converters.FirstOrDefault(x => x.CanConvert(descriptor.ExtensionType));
-
-                if(converter!=null) {
-                    extension = converter.ReadJson(reader, descriptor.ExtensionType, item.Value, serializer);
-                } else {
-                    var method = typeof(JObject).GetMethod("ToObject", new Type[] { typeof(JsonSerializer) }).MakeGenericMethod(descriptor.ExtensionType);
-                    extension = method.Invoke(item.Value, new object[] { serializer });
+            while(reader.Read()) {
+                if(reader.TokenType == JsonToken.PropertyName) {
+                    name = reader.Value.ToString();
+                } else if(reader.TokenType != JsonToken.EndObject) {
+                    var descriptor = _extensions.Extensions.First(x => name.Equals(x.ExtensionName, StringComparison.OrdinalIgnoreCase));
+                    var value = serializer.Deserialize(reader, descriptor.ExtensionType);
+                    message.Extension(descriptor.ExtensionType ?? value.GetType(), value);
                 }
-
-                message.Extension(descriptor?.ExtensionType ?? extension.GetType(), extension);
             }
 
             return message;

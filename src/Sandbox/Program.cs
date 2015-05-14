@@ -41,7 +41,10 @@ namespace Sandbox {
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer) {
-            return new VersionExtension { Version = existingValue.ToString() };
+            if(reader.TokenType == JsonToken.String) {
+                return new VersionExtension { Version = reader.Value.ToString() };
+            }
+            throw new InvalidOperationException("VersionConverter.ReadJson");            
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) {
