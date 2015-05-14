@@ -23,11 +23,10 @@ namespace Reap.Newtonsoft.Json {
             foreach(var item in dictionary) {
                 var descriptor = _extensions.Extensions.First(x => item.Key.Equals(x.ExtensionName, StringComparison.OrdinalIgnoreCase));
                 var extension = (object)null;
+                var converter = serializer.Converters.FirstOrDefault(x => x.CanConvert(descriptor.ExtensionType));
 
-                if(descriptor.ConverterType != null) {
-                    var converter = (JsonConverter)Activator.CreateInstance(descriptor.ConverterType);
+                if(converter!=null) {
                     extension = converter.ReadJson(reader, descriptor.ExtensionType, item.Value, serializer);
-
                 } else {
                     var method = typeof(JObject).GetMethod("ToObject", new Type[] { typeof(JsonSerializer) }).MakeGenericMethod(descriptor.ExtensionType);
                     extension = method.Invoke(item.Value, new object[] { serializer });
@@ -56,15 +55,13 @@ namespace Reap.Newtonsoft.Json {
     }
 
     public class ExtensionDescriptor {
-        public ExtensionDescriptor(string extensionName, Type extensionType, Type converterType) {
+        public ExtensionDescriptor(string extensionName, Type extensionType) {
             ExtensionName = extensionName;
             ExtensionType = extensionType;
-            ConverterType = converterType;
         }
 
         public string ExtensionName { get; }
         public Type ExtensionType { get; }
-        public Type ConverterType { get; }
     }
 
     public interface IExtensionProvider {
@@ -73,7 +70,6 @@ namespace Reap.Newtonsoft.Json {
 
     public class ExtensionProvider : IExtensionProvider {
         private readonly string ExtensionName = "Extension";
-        private readonly string ConverterName = "Converter";
 
         public ExtensionProvider() {
         }
@@ -87,19 +83,15 @@ namespace Reap.Newtonsoft.Json {
         }
 
         private IReadOnlyList<ExtensionDescriptor> GetExtensions() {
-            var assemblies = new HashSet<Assembly>(GetAssemblies());
-
-            var extensions = GetExtensions(assemblies);
-            var converters = GetConverters(assemblies);
-
             var descriptors = new List<ExtensionDescriptor>();
+            var assemblies = new HashSet<Assembly>(GetAssemblies());
+            var extensions = GetExtensions(assemblies);            
 
             foreach(var extension in extensions) {
                 var extensionType = extension;
                 var extensionName = extensionType.Name.EndsWith(ExtensionName, StringComparison.OrdinalIgnoreCase) ? extensionType.Name.Substring(0, extensionType.Name.Length - ExtensionName.Length) : extensionType.Name;
-                var converterType = converters.FirstOrDefault(x => x.Name.Equals(extensionName + ConverterName, StringComparison.OrdinalIgnoreCase));
 
-                descriptors.Add(new ExtensionDescriptor(extensionName, extensionType, converterType));
+                descriptors.Add(new ExtensionDescriptor(extensionName, extensionType));
             }
 
             return descriptors;
@@ -141,16 +133,6 @@ namespace Reap.Newtonsoft.Json {
             }
 
             return type.Name.EndsWith(ExtensionName, StringComparison.Ordinal);
-        }
-
-        private IReadOnlyList<Type> GetConverters(HashSet<Assembly> assemblies) {
-            return assemblies.SelectMany(x => x.DefinedTypes)
-                .Where(x => IsConverter(x, assemblies))
-                .ToList();
-        }
-
-        protected internal virtual bool IsConverter(Type type, ISet<Assembly> assemblies) {
-            return typeof(JsonConverter).IsAssignableFrom(type);
         }
     }
 
