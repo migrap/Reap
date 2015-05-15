@@ -6,11 +6,7 @@ using Reap.Newtonsoft.Json;
 namespace Sandbox {
     public class Program {
         public void Main(string[] args) {
-            var settings = new JsonSerializerSettings {
-                ContractResolver = new MessageCamelCasePropertyNamesContractResolver(),
-                Formatting = Formatting.Indented,
-                NullValueHandling = NullValueHandling.Ignore
-            };
+            var settings = new MessageSerializerSettings();
             settings.Converters.Add(new MessageConverter());
             settings.Converters.Add(new VersionConverter());
 

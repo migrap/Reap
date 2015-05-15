@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace Reap.Newtonsoft.Json {
     public class MessageConverter : JsonConverter {
-        private IExtensionProvider _extensions = new ExtensionProvider();
+        private readonly IReadOnlyList<Extension> _extensions = (new DefaultExtensionProvider()).Extensions;
 
         public override bool CanConvert(Type objectType) {
             return typeof(Message).IsAssignableFrom(objectType);
@@ -21,9 +19,9 @@ namespace Reap.Newtonsoft.Json {
                 if(reader.TokenType == JsonToken.PropertyName) {
                     name = reader.Value.ToString();
                 } else if(reader.TokenType != JsonToken.EndObject) {
-                    var descriptor = _extensions.Extensions.First(x => name.Equals(x.ExtensionName, StringComparison.OrdinalIgnoreCase));
-                    var value = serializer.Deserialize(reader, descriptor.ExtensionType);
-                    message.Extension(descriptor.ExtensionType ?? value.GetType(), value);
+                    var extension = _extensions.First(x => name.Equals(x.Name, StringComparison.OrdinalIgnoreCase));
+                    var value = serializer.Deserialize(reader, extension.Type);
+                    message.Extension(extension.Type ?? value.GetType(), value);
                 }
             }
 
@@ -33,112 +31,12 @@ namespace Reap.Newtonsoft.Json {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) {
             var dictionary = new Dictionary<string, object>();
 
-            foreach(var extension in (value as Message).Extensions) {
-                var descriptor = _extensions.Extensions.FirstOrDefault(x => extension.Key.IsAssignableFrom(x.ExtensionType));
-                dictionary[descriptor?.ExtensionName ?? extension.Key.Name] = extension.Value;
+            foreach(var item in (value as Message).Extensions) {
+                var extension = _extensions.FirstOrDefault(x => item.Key.IsAssignableFrom(x.Type));
+                dictionary[extension?.Name ?? item.Key.Name] = item.Value;
             }
 
             serializer.Serialize(writer, dictionary);
-        }
-    }
-
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-    public sealed class NonExtensionAttribute : Attribute {
-    }
-
-    public class ExtensionDescriptor {
-        public ExtensionDescriptor(string extensionName, Type extensionType) {
-            ExtensionName = extensionName;
-            ExtensionType = extensionType;
-        }
-
-        public string ExtensionName { get; }
-        public Type ExtensionType { get; }
-    }
-
-    public interface IExtensionProvider {
-        IReadOnlyList<ExtensionDescriptor> Extensions { get; }
-    }
-
-    public class ExtensionProvider : IExtensionProvider {
-        private readonly string ExtensionName = "Extension";
-
-        public ExtensionProvider() {
-        }
-
-        private IEnumerable<Assembly> Assemblies { get; } = GetAssemblies();
-
-        public IReadOnlyList<ExtensionDescriptor> Extensions => GetExtensions();
-
-        private static IEnumerable<Assembly> GetAssemblies() {
-            return AppDomain.CurrentDomain.GetAssemblies().Where(x => !x.IsDynamic && !StartsWith(x, "System", "Microsoft", "Newtonsoft"));
-        }
-
-        private IReadOnlyList<ExtensionDescriptor> GetExtensions() {
-            var descriptors = new List<ExtensionDescriptor>();
-            var assemblies = new HashSet<Assembly>(GetAssemblies());
-            var extensions = GetExtensions(assemblies);            
-
-            foreach(var extension in extensions) {
-                var extensionType = extension;
-                var extensionName = extensionType.Name.EndsWith(ExtensionName, StringComparison.OrdinalIgnoreCase) ? extensionType.Name.Substring(0, extensionType.Name.Length - ExtensionName.Length) : extensionType.Name;
-
-                descriptors.Add(new ExtensionDescriptor(extensionName, extensionType));
-            }
-
-            return descriptors;
-        }
-
-        private static bool StartsWith(Assembly assembly, params string[] values) {
-            return StartsWith(assembly.GetName().Name, values);
-        }
-
-        private static bool StartsWith(string name, params string[] values) {
-            return values.Any(x => name.StartsWith(x));
-        }
-
-        private IReadOnlyCollection<Type> GetExtensions(HashSet<Assembly> assemblies) {
-            return assemblies.SelectMany(x => x.DefinedTypes)
-                .Where(x => IsExtension(x, assemblies))
-                .ToList();
-        }
-
-        protected internal virtual bool IsExtension(Type type, ISet<Assembly> assemblies) {
-            if(type.IsClass == false) {
-                return false;
-            }
-
-            if(type.IsAbstract) {
-                return false;
-            }
-
-            if(type.IsPublic == false) {
-                return false;
-            }
-
-            if(type.ContainsGenericParameters) {
-                return false;
-            }
-
-            if(type.IsDefined(typeof(NonExtensionAttribute))) {
-                return false;
-            }
-
-            return type.Name.EndsWith(ExtensionName, StringComparison.Ordinal);
-        }
-    }
-
-    public class MessageCamelCasePropertyNamesContractResolver : CamelCasePropertyNamesContractResolver {
-        private IExtensionProvider _extensionProvider = new ExtensionProvider();
-
-        protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization) {
-            var property = base.CreateProperty(member, memberSerialization);
-
-            if(typeof(Message).IsAssignableFrom(property.DeclaringType) && property.PropertyType == typeof(IExtensionCollection)) {
-                property.ShouldSerialize = instance => false;
-            }
-
-            return property;
         }
     }
 
