@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Reap;
 using Reap.Newtonsoft.Json;
+using Reap.Extensions.Headers;
 
 namespace Sandbox {
     public class Program {
@@ -14,6 +15,10 @@ namespace Sandbox {
 
             var authorization = message.Extension(x => x.Authorization, x => {
                 x.Token = "Bearer 0xABCDEF0123456789";
+            });
+
+            var headers = message.Extension(x => x.Headers, x => {
+                x.Headers.Add("", "");
             });
 
             var version = message.Extension(x => x.Version, x => {
