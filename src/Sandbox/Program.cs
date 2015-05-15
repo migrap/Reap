@@ -1,8 +1,10 @@
 ﻿using System;
 using Newtonsoft.Json;
 using Reap;
-using Reap.Newtonsoft.Json;
+using Reap.Extensions.Authentication;
+using Reap.Extensions.Authorization;
 using Reap.Extensions.Headers;
+using Reap.Newtonsoft.Json;
 
 namespace Sandbox {
     public class Program {
@@ -14,11 +16,14 @@ namespace Sandbox {
             var message = new Message();
 
             var authorization = message.Extension(x => x.Authorization, x => {
-                x.Token = "Bearer 0xABCDEF0123456789";
             });
 
             var headers = message.Extension(x => x.Headers, x => {
                 x.Headers.Add("", "");
+            });
+
+            var authentication = message.Extension(x => x.Authentication, x => {
+                x.Token = "Bearer 0xABCDEF0123456789";
             });
 
             var version = message.Extension(x => x.Version, x => {
@@ -45,7 +50,7 @@ namespace Sandbox {
             if(reader.TokenType == JsonToken.String) {
                 return new VersionExtension { Version = reader.Value.ToString() };
             }
-            throw new InvalidOperationException("VersionConverter.ReadJson");            
+            throw new InvalidOperationException("VersionConverter.ReadJson");
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) {
@@ -72,24 +77,6 @@ namespace Sandbox {
 
         public static IVersionExtension Version(this Message message) {
             return message.Extension<IVersionExtension>();
-        }
-    }
-
-    public interface IAuthorizationExtension {
-        string Token { get; set; }
-    }
-
-    public class AuthorizationExtension : IAuthorizationExtension {
-        public string Token { get; set; }
-    }
-
-    public static partial class AuthorizationExtensions {
-        public static IAuthorizationExtension Extension(this Message message, ExtensionSelector<IAuthorizationExtension> extension, Action<IAuthorizationExtension> callback = null) {
-            return message.Extension<IAuthorizationExtension>(extension, callback);
-        }
-
-        public static IAuthorizationExtension Authorization(this Message message) {
-            return message.Extension<IAuthorizationExtension>();
         }
     }
 }
