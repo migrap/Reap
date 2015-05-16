@@ -27,7 +27,7 @@ namespace Sandbox {
             });
 
             var claims = message.Extension(x => x.Claims, x => {
-                x.Claims.Add("issuer", "type", "value");`   
+                x.Claims.Add("issuer", "type", "value");
             });
 
             var authentication = message.Extension(x => x.Authentication, x => {
