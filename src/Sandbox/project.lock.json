@@ -8,7 +8,8 @@
       "Reap.Newtonsoft.Json >= 1.0.0-*",
       "Reap.Extensions.Headers >= 1.0.0-*",
       "Reap.Extensions.Authentication >= 1.0.0-*",
-      "Reap.Extensions.Authorization >= 1.0.0-*"
+      "Reap.Extensions.Authorization >= 1.0.0-*",
+      "Reap.Extensions.Claims >= 1.0.0-*"
     ],
     "DNX,Version=v4.5.1": []
   },

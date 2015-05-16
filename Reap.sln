@@ -22,6 +22,8 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Reap.Extensions.Authenticat
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Reap.Extensions.Authorization", "src\Reap.Extensions.Authorization\Reap.Extensions.Authorization.xproj", "{E674747B-0E33-4D3E-A9E4-207610183B1F}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Reap.Extensions.Claims", "src\Reap.Extensions.Claims\Reap.Extensions.Claims.xproj", "{4F67D076-5C04-4C69-B88E-186A04251582}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,10 @@ Global
 		{E674747B-0E33-4D3E-A9E4-207610183B1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E674747B-0E33-4D3E-A9E4-207610183B1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E674747B-0E33-4D3E-A9E4-207610183B1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F67D076-5C04-4C69-B88E-186A04251582}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F67D076-5C04-4C69-B88E-186A04251582}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F67D076-5C04-4C69-B88E-186A04251582}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F67D076-5C04-4C69-B88E-186A04251582}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,5 +69,6 @@ Global
 		{83354318-7865-4A01-8931-8AEB9E4F8A9D} = {1ECB4F77-E7BA-44A1-96FC-DCF20DD74F27}
 		{F7970E8E-FA99-4696-90C5-02324A6158B0} = {1ECB4F77-E7BA-44A1-96FC-DCF20DD74F27}
 		{E674747B-0E33-4D3E-A9E4-207610183B1F} = {1ECB4F77-E7BA-44A1-96FC-DCF20DD74F27}
+		{4F67D076-5C04-4C69-B88E-186A04251582} = {1ECB4F77-E7BA-44A1-96FC-DCF20DD74F27}
 	EndGlobalSection
 EndGlobal

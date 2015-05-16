@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Security.Claims;
+using System.Threading;
 using Newtonsoft.Json;
 using Reap;
 using Reap.Extensions.Authentication;
 using Reap.Extensions.Authorization;
 using Reap.Extensions.Headers;
+using Reap.Extensions.Claims;
 using Reap.Newtonsoft.Json;
+using System.Linq;
 
 namespace Sandbox {
     public class Program {
@@ -20,6 +24,10 @@ namespace Sandbox {
 
             var headers = message.Extension(x => x.Headers, x => {
                 x.Headers.Add("", "");
+            });
+
+            var claims = message.Extension(x => x.Claims, x => {
+                x.Claims.Add("issuer", "type", "value");`   
             });
 
             var authentication = message.Extension(x => x.Authentication, x => {
