@@ -3,6 +3,7 @@
   "version": -9998,
   "projectFileDependencyGroups": {
     "": [],
+    ".NETFramework,Version=v4.5": [],
     "DNX,Version=v4.5.1": []
   },
   "libraries": {}

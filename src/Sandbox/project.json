@@ -1,26 +1,26 @@
 {
-    "version": "1.0.0-*",
-    "description": "",
-    "authors": [ "" ],
-    "tags": [ "" ],
-    "projectUrl": "",
-    "licenseUrl": "",
+  "version": "1.0.0-*",
+  "description": "",
+  "authors": [ "" ],
+  "tags": [ "" ],
+  "projectUrl": "",
+  "licenseUrl": "",
 
-    "dependencies": {
-        "Reap": "1.0.0-alpha1",
-        "Newtonsoft.Json": "6.0.8",
-        "Reap.Newtonsoft.Json": "1.0.0-*",
-        "Reap.Extensions.Headers": "1.0.0-*",
-        "Reap.Extensions.Authentication": "1.0.0-*",
-        "Reap.Extensions.Authorization": "1.0.0-*",
-        "Reap.Extensions.Claims": "1.0.0-*"
-    },
+  "dependencies": {
+    "Reap": "1.0.0-alpha1",
+    "Newtonsoft.Json": "6.0.8",
+    "Reap.Newtonsoft.Json": "1.0.0-*",
+    "Reap.Extensions.Headers": "1.0.0-*",
+    "Reap.Extensions.Claims": "1.0.0-*",
+    "Reap.Extensions.Authorization": "1.0.0-*",
+    "Reap.Extensions.Authentication": "1.0.0-*"
+  },
 
-    "commands": {
-        "Sandbox": "Sandbox"
-    },
+  "commands": {
+    "Sandbox": "Sandbox"
+  },
 
-    "frameworks": {
-        "dnx451": { }
-    }
+  "frameworks": {
+    "net45": { }
+  }
 }
