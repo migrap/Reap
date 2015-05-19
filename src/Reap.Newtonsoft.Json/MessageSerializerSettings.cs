@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using System.Linq;
+using Newtonsoft.Json;
 
 namespace Reap.Newtonsoft.Json {
     public class MessageSerializerSettings : JsonSerializerSettings {
@@ -6,8 +8,17 @@ namespace Reap.Newtonsoft.Json {
             ContractResolver = new MessageContractResolver();
             Formatting = Formatting.None;
             NullValueHandling = NullValueHandling.Ignore;
-
             Converters.Add(new MessageConverter());
+        }
+
+        public MessageSerializerSettings(params JsonConverter[] converters):this() {
+            foreach(var converter in converters) {
+                Converters.Add(converter);
+            }
+        }
+
+        public MessageSerializerSettings(params Func<MessageSerializerSettings, Func<JsonConverter>>[] converters)
+            : this(converters.Select(x => x(null)()).ToArray()) {
         }
     }
 }
