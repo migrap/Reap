@@ -28,10 +28,10 @@
           "dependencies": {},
           "frameworkAssemblies": [],
           "runtimeAssemblies": [
-            "lib/net45/Newtonsoft.Json.dll"
+            "lib/dnx451/Newtonsoft.Json.dll"
           ],
           "compileAssemblies": [
-            "lib/net45/Newtonsoft.Json.dll"
+            "lib/dnx451/Newtonsoft.Json.dll"
           ]
         }
       },
@@ -39,6 +39,8 @@
         "Newtonsoft.Json.6.0.8.nupkg",
         "Newtonsoft.Json.6.0.8.nupkg.sha512",
         "Newtonsoft.Json.nuspec",
+        "lib/dnx451/Newtonsoft.Json.dll",
+        "lib/dnx451/Newtonsoft.Json.xml",
         "lib/net20/Newtonsoft.Json.dll",
         "lib/net20/Newtonsoft.Json.xml",
         "lib/net35/Newtonsoft.Json.dll",
