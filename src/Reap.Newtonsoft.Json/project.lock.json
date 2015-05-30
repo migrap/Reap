@@ -4,15 +4,15 @@
   "projectFileDependencyGroups": {
     "": [
       "Reap >= 1.0.0-alpha1",
-      "Newtonsoft.Json >= 7.0.1-beta3"
+      "Newtonsoft.Json >= 6.0.8"
     ],
     ".NETFramework,Version=v4.5": [],
     "DNX,Version=v4.5.1": []
   },
   "libraries": {
-    "Newtonsoft.Json/7.0.1-beta3": {
+    "Newtonsoft.Json/6.0.8": {
       "serviceable": false,
-      "sha": "065sWAmniKTf+Xg28xrDMwKKU7v0sryThZsB6GwVW9Jm3am0INdbGxhZxwy/0nyzKrh+MkFfS4Bq9na3xH3CkQ==",
+      "sha": "nZX7xCBl3PXpxRCxVtVfUXn63gSzrT8aO0VB9Tp24q656IUup9EGE8SGlo0UJ9if48OacJU34ZEtKEGWIdNCzg==",
       "frameworks": {
         ".NETFramework,Version=v4.5": {
           "dependencies": {},
@@ -36,8 +36,8 @@
         }
       },
       "files": [
-        "Newtonsoft.Json.7.0.1-beta3.nupkg",
-        "Newtonsoft.Json.7.0.1-beta3.nupkg.sha512",
+        "Newtonsoft.Json.6.0.8.nupkg",
+        "Newtonsoft.Json.6.0.8.nupkg.sha512",
         "Newtonsoft.Json.nuspec",
         "lib/net20/Newtonsoft.Json.dll",
         "lib/net20/Newtonsoft.Json.xml",
@@ -47,10 +47,12 @@
         "lib/net40/Newtonsoft.Json.xml",
         "lib/net45/Newtonsoft.Json.dll",
         "lib/net45/Newtonsoft.Json.xml",
+        "lib/netcore45/Newtonsoft.Json.dll",
+        "lib/netcore45/Newtonsoft.Json.xml",
         "lib/portable-net40+sl5+wp80+win8+wpa81/Newtonsoft.Json.dll",
         "lib/portable-net40+sl5+wp80+win8+wpa81/Newtonsoft.Json.xml",
-        "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.dll",
-        "lib/portable-net45+wp80+win8+wpa81+dnxcore50/Newtonsoft.Json.xml",
+        "lib/portable-net45+wp80+win8+wpa81+aspnetcore50/Newtonsoft.Json.dll",
+        "lib/portable-net45+wp80+win8+wpa81+aspnetcore50/Newtonsoft.Json.xml",
         "tools/install.ps1"
       ]
     }

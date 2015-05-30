@@ -16,40 +16,6 @@
     ".NETFramework,Version=v4.5": []
   },
   "libraries": {
-    "Microsoft.Experimental.Collections/1.0.3-alpha": {
-      "serviceable": true,
-      "sha": "op6XTwDeq9oYZ7tZXnTucytwfhX6fw5S055LNAlPj501khnAPwnhQN6Pj5ZjDxwxESWqhtk9kbv6qhBZWMHr5Q==",
-      "frameworks": {
-        ".NETFramework,Version=v4.5": {
-          "dependencies": {},
-          "frameworkAssemblies": [],
-          "runtimeAssemblies": [
-            "lib/portable-net45+win8+wp8/Microsoft.Experimental.Collections.dll"
-          ],
-          "compileAssemblies": [
-            "lib/portable-net45+win8+wp8/Microsoft.Experimental.Collections.dll"
-          ]
-        },
-        "DNX,Version=v4.5.1": {
-          "dependencies": {},
-          "frameworkAssemblies": [],
-          "runtimeAssemblies": [
-            "lib/portable-net45+win8+wp8/Microsoft.Experimental.Collections.dll"
-          ],
-          "compileAssemblies": [
-            "lib/portable-net45+win8+wp8/Microsoft.Experimental.Collections.dll"
-          ]
-        }
-      },
-      "files": [
-        "License-Stable.rtf",
-        "Microsoft.Experimental.Collections.1.0.3-alpha.nupkg",
-        "Microsoft.Experimental.Collections.1.0.3-alpha.nupkg.sha512",
-        "Microsoft.Experimental.Collections.nuspec",
-        "lib/portable-net45+win8+wp8/Microsoft.Experimental.Collections.dll",
-        "lib/portable-net45+win8+wp8/Microsoft.Experimental.Collections.xml"
-      ]
-    },
     "Newtonsoft.Json/6.0.8": {
       "serviceable": false,
       "sha": "nZX7xCBl3PXpxRCxVtVfUXn63gSzrT8aO0VB9Tp24q656IUup9EGE8SGlo0UJ9if48OacJU34ZEtKEGWIdNCzg==",

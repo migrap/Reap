@@ -7,8 +7,7 @@
   "licenseUrl": "",
 
   "dependencies": {
-    "Reap": "1.0.0-alpha1",
-    "Microsoft.Experimental.Collections": "1.0.3-alpha"
+    "Reap": "1.0.0-alpha1"
   },
 
   "frameworks": {
