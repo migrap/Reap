@@ -1,7 +1,7 @@
-﻿using System;
-
-namespace Reap.Extensions.Mood {
+﻿namespace Reap.Extensions.Mood {
     public class MoodExtension : IMoodExtension {
-        public Mood Mood { get; set; }
+        public string Name { get; set; }
+        public string Value { get; set; }
+        public Culture Culture { get; set; } = Culture.Current;
     }
 }
