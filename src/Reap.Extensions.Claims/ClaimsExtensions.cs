@@ -13,5 +13,9 @@ namespace Reap.Extensions.Claims {
         public static void Add(this IClaimCollection collection, string issuer, string type, string value) {
             collection.Add(new Claim(issuer, type, value));
         }
+
+        public static void Add(this IClaimCollection collection, string type, string value) {
+            collection.Add(new Claim(type, value));
+        }
     }
 }

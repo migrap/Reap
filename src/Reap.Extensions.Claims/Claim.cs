@@ -8,6 +8,10 @@ namespace Reap.Extensions.Claims {
             Value = value;
         }
 
+        public Claim(string type, string value)
+            : this("default", type, value) {
+        }
+
         public string Issuer { get; }
 
         public string Type { get; }
