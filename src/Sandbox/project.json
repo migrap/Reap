@@ -13,7 +13,9 @@
     "Reap.Extensions.Headers": "1.0.0-*",
     "Reap.Extensions.Claims": "1.0.0-*",
     "Reap.Extensions.Authorization": "1.0.0-*",
-    "Reap.Extensions.Authentication": "1.0.0-*"
+    "Reap.Extensions.Authentication": "1.0.0-*",
+    "Reap.Extensions.Mood": "1.0.0-*",
+    "Reap.Extensions.Resource": "1.0.0-*"
   },
 
   "commands": {

@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Security.Claims;
-using System.Threading;
 using Newtonsoft.Json;
 using Reap;
 using Reap.Extensions.Authentication;
 using Reap.Extensions.Authorization;
-using Reap.Extensions.Headers;
 using Reap.Extensions.Claims;
+using Reap.Extensions.Headers;
+using Reap.Extensions.Mood;
+using Reap.Extensions.Resource;
 using Reap.Newtonsoft.Json;
-using System.Linq;
 
 namespace Sandbox {
     public class Program {
@@ -37,6 +36,21 @@ namespace Sandbox {
             var version = message.Extension(x => x.Version, x => {
                 x.Version = "1.0.0";
             });
+
+            var mood = message.Extension(x => x.Mood, x => {
+                x.Name = "urn:reap:mood:angry";
+                x.Value = "angry";
+            });
+
+            mood = message.Extension(x => x.Mood, x => x.Angry);
+
+            var uri = message.Extension(x => x.Resource, x => {
+                x.Resource = "http://www.google.com";
+            });
+
+            var urn = message.Extension(x => x.Resource, "urn:here@home.com");
+
+            var urh = message.Extension(x => x.Resource, x => x.Home);
 
             var json = (string)null;
             json = JsonConvert.SerializeObject(message, settings);
