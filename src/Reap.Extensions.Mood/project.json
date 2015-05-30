@@ -1,10 +1,10 @@
 ﻿{
   "version": "1.0.0-*",
-  "description": "",
+  "description": "Check out ASP.NET vNext Localization for ideas on how to localize this",
   "authors": [ "" ],
   "tags": [ "" ],
   "projectUrl": "",
-  "licenseUrl": "",
+  "licenseUrl": "",  
 
   "dependencies": {
     "Reap": "1.0.0-alpha1"

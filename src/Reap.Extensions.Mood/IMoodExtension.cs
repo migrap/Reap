@@ -1,5 +1,9 @@
-﻿namespace Reap.Extensions.Mood {
+﻿using System.Globalization;
+
+namespace Reap.Extensions.Mood {
     public interface IMoodExtension {
-        Mood Mood { get; set; }
+        string Name { get; set; }
+        string Value { get; set; }
+        Culture Culture { get; set; }
     }
 }

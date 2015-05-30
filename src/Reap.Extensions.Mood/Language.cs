@@ -2,7 +2,7 @@
 using System.Globalization;
 
 namespace Reap.Extensions.Mood {
-    internal class Language : Dictionary<CultureInfo, string> {
+    public class Language : Dictionary<CultureInfo, string> {
         public Language() {
         }
 
