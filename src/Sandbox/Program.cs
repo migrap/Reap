@@ -7,6 +7,7 @@ using Reap.Extensions.Claims;
 using Reap.Extensions.Headers;
 using Reap.Extensions.Mood;
 using Reap.Extensions.Resource;
+using Reap.Extensions.Objects;
 using Reap.Newtonsoft.Json;
 
 namespace Sandbox {
@@ -43,6 +44,16 @@ namespace Sandbox {
 
             var uri = message.Extension(x => x.Resource, x => {
                 x.Resource = "http://www.google.com";
+            });
+
+            var obj = message.Extension(x => x.Object, x => {
+                x.Class = "Person";
+                x.Properties = new {
+                    name = "Michael",
+                    age = 10,
+                };
+                x.Links.Add(Link.About("http://www.about.com"));
+                x.Title = "Person Description";
             });
 
             var urn = message.Extension(x => x.Resource, "urn:here@home.com");

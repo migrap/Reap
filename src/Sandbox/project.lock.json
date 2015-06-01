@@ -11,7 +11,8 @@
       "Reap.Extensions.Authorization >= 1.0.0-*",
       "Reap.Extensions.Authentication >= 1.0.0-*",
       "Reap.Extensions.Mood >= 1.0.0-*",
-      "Reap.Extensions.Resource >= 1.0.0-*"
+      "Reap.Extensions.Resource >= 1.0.0-*",
+      "Reap.Extensions.Objects >= 1.0.0-*"
     ],
     ".NETFramework,Version=v4.5": []
   },
