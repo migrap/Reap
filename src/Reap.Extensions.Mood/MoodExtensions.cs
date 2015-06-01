@@ -10,12 +10,16 @@ namespace Reap.Extensions.Mood {
             return message.Extension<IMoodExtension>();
         }
 
+        public static IMoodExtension Extension(this Message message, ExtensionSelector<IMoodExtension> extension, Mood value) {
+            return message.Extension(extension, x => x.Mood = value);
+        }
+
         public static IMoodExtension Extension(this Message message, ExtensionSelector<IMoodExtension> extension, Func<IMoodExtension, Func<IMoodExtension>> callback) {
             return message.Extension(callback(message.Extension<IMoodExtension>())());
         }
 
         public static IMoodExtension Angry(this IMoodExtension extension) {
-            return new MoodExtension("angry", "angry");
+            return new MoodExtension("angry");
         }
     }
 }

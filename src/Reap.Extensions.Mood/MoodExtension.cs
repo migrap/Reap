@@ -3,13 +3,14 @@
         public MoodExtension() {
         }
 
-        public MoodExtension(string name, string value) {
-            Name = name;
-            Value = value;
+        public MoodExtension(string mood) {
+            Mood = new Mood(mood);
         }
 
-        public string Name { get; set; }
-        public string Value { get; set; }
-        public Culture Culture { get; set; } = Culture.Current;
+        public MoodExtension(Mood mood) {
+            Mood = mood;
+        }
+
+        public Mood Mood { get; set; }
     }
 }

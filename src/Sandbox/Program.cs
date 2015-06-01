@@ -38,11 +38,8 @@ namespace Sandbox {
             });
 
             var mood = message.Extension(x => x.Mood, x => {
-                x.Name = "urn:reap:mood:angry";
-                x.Value = "angry";
-            });
-
-            mood = message.Extension(x => x.Mood, x => x.Angry);
+                x.Mood = Mood.Happy;
+            });            
 
             var uri = message.Extension(x => x.Resource, x => {
                 x.Resource = "http://www.google.com";
