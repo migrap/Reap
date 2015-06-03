@@ -60,11 +60,16 @@ namespace Sandbox {
 
             //var urh = message.Extension(x => x.Resource, x => x.Home);
 
-            var cmd = message.Extension(x => x.Command, x => {
-                x = x.CreateAccount(name: "Michael");
-            });
+            //var cmd = message.Extension(x => x.Command, x => {
+            //    x = x.CreateAccount(name: "Michael");
+            //});
 
-            message.xExtension(x => x.Command, x => x.Account, x => x.Create(""));
+            message.xExtension(x => x.Command, x => x.Command = Account.Create(create => {
+                create.Name = Guid.Empty.ToString();
+            }));
+                
+
+            //message.xExtension(x => x.Command, x => x.Account.Create(""));
 
             var json = (string)null;
             json = JsonConvert.SerializeObject(message, settings);
@@ -78,29 +83,25 @@ namespace Sandbox {
     }
 
     public interface ICommandExtension {
-
+        ICommand Command { get; set; }
     }
 
-    public abstract class CommandExtension : ICommandExtension {
-        public CommandExtension(string uri) {
-            Uri = uri;  
+    public interface ICommand { }
+
+    public class CommandExtension : ICommandExtension {
+        public CommandExtension() {
         }
 
-        public string Uri { get; }
-    }
-
-    public abstract class AccountCommandExtension : CommandExtension {
-        public AccountCommandExtension() : base("/account") {
-        }
-    }
-
-    public class CreateAccountCommandExtension : AccountCommandExtension {
-        public CreateAccountCommandExtension(string name) {
-            Name = name;
+        public CommandExtension(ICommandExtension extension) {
+            Command = extension.Command;
         }
 
-        public string Name { get; }
-    }
+        public CommandExtension(ICommand command) {
+            Command = command;
+        }
+
+        public ICommand Command { get; set; }
+    }  
 
     public delegate Func<T> CommandSelector<T>(ICommandExtension extension = null) where T : ICommandExtension;
 
@@ -110,38 +111,31 @@ namespace Sandbox {
         }    
         
         public static ICommandExtension Command(this Message message) {
-            return default(ICommandExtension);
+            return message.Extension<ICommandExtension>(new CommandExtension());
         }
 
-        public static ICommandExtension CreateAccount(this ICommandExtension extension, string name) {
-            return new CreateAccountCommand(name);
-        }
-
-        //public static ICommandExtension xExtension(this Message message, ExtensionSelector<ICommandExtension> extension, CommandSelector<AccountCommandExtension> account, Func<AccountCommandExtension,Func<ICommandExtension>> command) {
-        //    return command(account(null)());
-        //}
-
-        public static ICommandExtension xExtension(this Message message, ExtensionSelector<ICommandExtension> extension, Func<ICommandExtension, Func<AccountCommandExtension>> account, Func<AccountCommandExtension, ICommandExtension> command) {
-            return message.Extension<ICommandExtension>(command(null));
-        }
-
-        public static AccountCommandExtension Account(this ICommandExtension extension) {
-            return default(AccountCommandExtension);
-        }
-
-        public static CreateAccountCommandExtension Create(this AccountCommandExtension extension, string name) {
-            return new CreateAccountCommandExtension(name);
+        public static ICommandExtension xExtension(this Message message, ExtensionSelector<ICommandExtension> extension, Action<ICommandExtension> callback = null) {
+            return message.Extension<ICommandExtension>(extension, callback);
         }
     }
 
-    public class CreateAccountCommand : CommandExtension {
-        public CreateAccountCommand(string name) : base("/account") {
-            Name = name;
+    
+    public static class Account {
+        public static Func<Action<CreateCommand>,ICommand> Create => (callback) => {
+            var command = new CreateCommand();
+            callback(command);
+            return command;
+        };
+
+        public abstract class AccountCommand : ICommand {
+            public string Uri { get; } = "/account";
         }
 
-        public string Name { get; }
-    }
-
+        public class CreateCommand : AccountCommand {
+            public string Name { get; set; }
+        }
+    }    
+    
 
     public class VersionConverter : JsonConverter {
         public override bool CanConvert(Type objectType) {
