@@ -64,12 +64,32 @@ namespace Sandbox {
             //    x = x.CreateAccount(name: "Michael");
             //});
 
-            message.xExtension(x => x.Command, x => x.Command = Account.Create(create => {
-                create.Name = Guid.Empty.ToString();
-            }));
-                
+            //message.xExtension(x => x.Command, x => x.Command = Account.Create(create => {
+            //    create.Name = Guid.Empty.ToString();
+            //}));
 
-            //message.xExtension(x => x.Command, x => x.Account.Create(""));
+            var owner = Guid.NewGuid().ToString();
+            var uuid = Guid.NewGuid().ToString();
+
+            message.Extension(x => x.Command, x => {
+                x.Path = "/account";
+                x.Name = "create";
+                x.Type = "application/vnd.bacnking+json";
+                x.Body = new { owner = owner, name = "Family Checking" };
+            });
+
+            message.Extension(x => x.Event, x => {
+                x.Path = "/account";
+                x.Name = "created";
+                x.Type = "application/vnd.bacnking+json";
+                x.Body = new {
+                    owner = owner,
+                    uuid = uuid,
+                    name = "Family Checking",
+                    date = DateTimeOffset.UtcNow,
+                    balance = 0.0
+                };
+            });
 
             var json = (string)null;
             json = JsonConvert.SerializeObject(message, settings);
@@ -83,96 +103,36 @@ namespace Sandbox {
     }
 
     public interface ICommandExtension {
-        ICommand Command { get; set; }
+        string Path { get; set; }
+        string Name { get; set; }
+        string Type { get; set; }
+        object Body { get; set; }
     }
-
-    public interface ICommand { }
-
-    public class CommandExtension : ICommandExtension {
-        public CommandExtension() {
-        }
-
-        public CommandExtension(ICommandExtension extension) {
-            Command = extension.Command;
-        }
-
-        public CommandExtension(ICommand command) {
-            Command = command;
-        }
-
-        public ICommand Command { get; set; }
-    }  
-
-    public delegate Func<T> CommandSelector<T>(ICommandExtension extension = null) where T : ICommandExtension;
 
     public static class CommnadExtensions {
         public static ICommandExtension Extension(this Message message, ExtensionSelector<ICommandExtension> extension, Action<ICommandExtension> callback = null) {
             return message.Extension<ICommandExtension>(extension, callback);
-        }    
-        
+        }
+
         public static ICommandExtension Command(this Message message) {
-            return message.Extension<ICommandExtension>(new CommandExtension());
-        }
-
-        public static ICommandExtension xExtension(this Message message, ExtensionSelector<ICommandExtension> extension, Action<ICommandExtension> callback = null) {
-            return message.Extension<ICommandExtension>(extension, callback);
+            return message.Extension<ICommandExtension>();
         }
     }
 
-    
-    public static class Account {
-        public static Func<Action<CreateCommand>,ICommand> Create => (callback) => {
-            var command = new CreateCommand();
-            callback(command);
-            return command;
-        };
-
-        public abstract class AccountCommand : ICommand {
-            public string Uri { get; } = "/account";
-        }
-
-        public class CreateCommand : AccountCommand {
-            public string Name { get; set; }
-        }
-    }    
-    
-
-    public class VersionConverter : JsonConverter {
-        public override bool CanConvert(Type objectType) {
-            return typeof(IVersionExtension).IsAssignableFrom(objectType);
-        }
-
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer) {
-            if(reader.TokenType == JsonToken.String) {
-                return new VersionExtension { Version = reader.Value.ToString() };
-            }
-            throw new InvalidOperationException("VersionConverter.ReadJson");
-        }
-
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) {
-            WriteJson(writer, value as IVersionExtension, serializer);
-        }
-
-        private void WriteJson(JsonWriter writer, IVersionExtension value, JsonSerializer serializer) {
-            serializer.Serialize(writer, value.Version);
-        }
+    public interface IEventExtension {
+        string Path { get; set; }
+        string Name { get; set; }
+        string Type { get; set; }
+        object Body { get; set; }
     }
 
-    public interface IVersionExtension {
-        string Version { get; set; }
-    }
-
-    public class VersionExtension : IVersionExtension {
-        public string Version { get; set; }
-    }
-
-    public static partial class VersionExtensions {
-        public static IVersionExtension Extension(this Message message, ExtensionSelector<IVersionExtension> extension, Action<IVersionExtension> callback = null) {
-            return message.Extension<IVersionExtension>(extension, callback);
+    public static class EventExtensions {
+        public static IEventExtension Extension(this Message message, ExtensionSelector<IEventExtension> extension, Action<IEventExtension> callback = null) {
+            return message.Extension<IEventExtension>(extension, callback);
         }
 
-        public static IVersionExtension Version(this Message message) {
-            return message.Extension<IVersionExtension>();
+        public static IEventExtension Event(this Message message) {
+            return message.Extension<IEventExtension>();
         }
     }
 }
