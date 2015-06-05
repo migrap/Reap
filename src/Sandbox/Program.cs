@@ -38,9 +38,9 @@ namespace Sandbox {
             //    x.Version = "1.0.0";
             //});
 
-            //var mood = message.Extension(x => x.Mood, x => {
-            //    x.Mood = Mood.Happy;
-            //});            
+            var mood = message.Extension(x => x.Mood, x => {
+                x.Mood = Mood.Happy;
+            });
 
             //var uri = message.Extension(x => x.Resource, x => {
             //    x.Resource = "http://www.google.com";
@@ -72,24 +72,25 @@ namespace Sandbox {
             var uuid = Guid.NewGuid().ToString();
 
             message.Extension(x => x.Command, x => {
-                x.Path = "/account";
+                x.Uuid = "10001";
+                x.Uri = "/account";
                 x.Name = "create";
                 x.Type = "application/vnd.bacnking+json";
-                x.Body = new { owner = owner, name = "Family Checking" };
+                x.Data = new { owner = owner, name = "Family Checking" };
             });
 
-            message.Extension(x => x.Event, x => {
-                x.Path = "/account";
-                x.Name = "created";
-                x.Type = "application/vnd.bacnking+json";
-                x.Body = new {
-                    owner = owner,
-                    uuid = uuid,
-                    name = "Family Checking",
-                    date = DateTimeOffset.UtcNow,
-                    balance = 0.0
-                };
-            });
+            //message.Extension(x => x.Event, x => {
+            //    x.Path = "/account";
+            //    x.Name = "created";
+            //    x.Type = "application/vnd.bacnking+json";
+            //    x.Body = new {
+            //        owner = owner,
+            //        uuid = uuid,
+            //        name = "Family Checking",
+            //        date = DateTimeOffset.UtcNow,
+            //        balance = 0.0
+            //    };
+            //});
 
             var json = (string)null;
             json = JsonConvert.SerializeObject(message, settings);
@@ -103,10 +104,11 @@ namespace Sandbox {
     }
 
     public interface ICommandExtension {
-        string Path { get; set; }
+        string Uuid { get; set; }
+        string Uri { get; set; }
         string Name { get; set; }
         string Type { get; set; }
-        object Body { get; set; }
+        object Data { get; set; }
     }
 
     public static class CommnadExtensions {
@@ -119,20 +121,20 @@ namespace Sandbox {
         }
     }
 
-    public interface IEventExtension {
-        string Path { get; set; }
-        string Name { get; set; }
-        string Type { get; set; }
-        object Body { get; set; }
-    }
+    //public interface IEventExtension {
+    //    string Path { get; set; }
+    //    string Name { get; set; }
+    //    string Type { get; set; }
+    //    object Body { get; set; }
+    //}
 
-    public static class EventExtensions {
-        public static IEventExtension Extension(this Message message, ExtensionSelector<IEventExtension> extension, Action<IEventExtension> callback = null) {
-            return message.Extension<IEventExtension>(extension, callback);
-        }
+    //public static class EventExtensions {
+    //    public static IEventExtension Extension(this Message message, ExtensionSelector<IEventExtension> extension, Action<IEventExtension> callback = null) {
+    //        return message.Extension<IEventExtension>(extension, callback);
+    //    }
 
-        public static IEventExtension Event(this Message message) {
-            return message.Extension<IEventExtension>();
-        }
-    }
+    //    public static IEventExtension Event(this Message message) {
+    //        return message.Extension<IEventExtension>();
+    //    }
+    //}
 }
