@@ -6,6 +6,15 @@ using System.Linq;
 using System.Threading;
 
 namespace Reap {
+    public interface IExtensible<T> where T : IExtensible<T> {
+        IExtensionCollection<T> Extensions { get; }
+    }
+
+    public interface IExtension<T> where T : IExtensible<T> {
+        void Attach(T owner);
+        void Detach(T owner);
+    }
+
     public class Message : IExtensible<Message> {
         private IExtensionCollection<Message> _extensions;
 

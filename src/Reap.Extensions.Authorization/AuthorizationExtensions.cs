@@ -7,7 +7,7 @@ namespace Reap.Extensions.Authorization {
         }
 
         public static IAuthorizationExtension Authorization(this Message message) {
-            return message.Extension<IAuthorizationExtension>();
+            return message.Extension<IAuthorizationExtension>(new AuthorizationExtension());
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Reap.Extensions.Headers {
         }
 
         public static IHeadersExtension Headers(this Message message) {
-            return message.Extension<IHeadersExtension>();
+            return message.Extension<IHeadersExtension>(new HeadersExtension());
         }
     }
 }

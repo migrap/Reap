@@ -4,14 +4,7 @@
   "projectFileDependencyGroups": {
     "": [
       "Reap >= 1.0.0-alpha1",
-      "Newtonsoft.Json >= 6.0.8",
-      "Reap.Newtonsoft.Json >= 1.0.0-*",
-      "Reap.Extensions.Headers >= 1.0.0-*",
-      "Reap.Extensions.Claims >= 1.0.0-*",
-      "Reap.Extensions.Authorization >= 1.0.0-*",
-      "Reap.Extensions.Authentication >= 1.0.0-*",
-      "Reap.Extensions.Mood >= 1.0.0-*",
-      "Reap.Extensions.Objects >= 1.0.0-*"
+      "Newtonsoft.Json >= 6.0.8"
     ],
     ".NETFramework,Version=v4.5": []
   },

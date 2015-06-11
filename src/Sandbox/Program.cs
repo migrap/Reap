@@ -5,29 +5,22 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Reap;
-using Reap.Extensions.Authentication;
-using Reap.Extensions.Authorization;
-using Reap.Extensions.Claims;
-using Reap.Extensions.Headers;
-using Reap.Extensions.Mood;
 //using Reap.Extensions.Resource;
-using Reap.Extensions.Objects;
-using Reap.Newtonsoft.Json;
 
 namespace Sandbox {
     public class Program {
         public void Main(string[] args) {
-            var settings = new MessageSerializerSettings();
-            settings.Converters.Add(new MessageConverter());
+            //var settings = new MessageSerializerSettings();
+            //settings.Converters.Add(new MessageConverter());
             //settings.Converters.Add(new VersionConverter());
 
             (new AccountService()).SendAsync(x => x.Create("Michael", "Checking"));
 
             var message = new Message();
 
-            var mood = message.Extension(x => x.Mood, x => {
-                x.Mood = Mood.Happy;
-            });
+            //var mood = message.Extension(x => x.Mood, x => {
+            //    x.Mood = Mood.Happy;
+            //});
 
             var owners = Enumerable.Range(0, 3).Select(x => Guid.NewGuid().ToString()).ToArray();
             var uuid = Guid.NewGuid().ToString();
@@ -41,9 +34,9 @@ namespace Sandbox {
             });
 
             var json = (string)null;
-            json = JsonConvert.SerializeObject(message, settings);
+            //json = JsonConvert.SerializeObject(message, settings);
 
-            
+
 
             //var egassem = JsonConvert.DeserializeObject<Message>(json, settings);
             //authorization = egassem.Extension(x => x.Authorization);
@@ -85,7 +78,7 @@ namespace Sandbox {
         public static void Create(this IAccountService account, string name, string type) {
         }
 
-        private static Dictionary<string,object> ToDictionary(IEnumerable<string> keys, IEnumerable<object> values) {
+        private static Dictionary<string, object> ToDictionary(IEnumerable<string> keys, IEnumerable<object> values) {
             var k = keys.GetEnumerator();
             var v = values.GetEnumerator();
             var d = new Dictionary<string, object>();
