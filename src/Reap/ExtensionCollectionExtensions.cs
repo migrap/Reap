@@ -1,11 +1,9 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq.Expressions;
 
-namespace Reap {
-    public interface IExtensionCollectionExtension { }
-    public static class ExtensionCollectionExtensions {
-        public static bool Contains(this IExtensionCollection source, params Func<IExtensionCollectionExtension, Func<Type>>[] types) {
-            return !types.Any(type => !source.Keys.Contains(type(null)()));
+namespace Migrap.Framework.Extensions {
+    public static partial class ExtensionCollectionExtensions {
+        public static bool Contains<TSource>(this TSource extensions, params Expression<ExtensionSelector<TSource, IExtension<TSource>>>[] expressions) where TSource : IExtensible<TSource> {
+            return true;
         }
     }
 }

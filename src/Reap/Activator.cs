@@ -4,8 +4,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Sandbox {
-    public static class FastActivator {
+namespace Migrap.Framework.Extensions {
+    internal static class FastActivator {
         private static readonly ConcurrentDictionary<Type, ObjectActivator> activators = new ConcurrentDictionary<Type, ObjectActivator>();
 
         public delegate object ObjectActivator(params object[] args);
@@ -14,15 +14,18 @@ namespace Sandbox {
             var paramsInfo = ctor.GetParameters();
             var param = Expression.Parameter(typeof(object[]), "args");
             var argsExp = new Expression[paramsInfo.Length];
-            for(int i = 0; i < paramsInfo.Length; i++) {
+
+            for(var i = 0; i < paramsInfo.Length; i++) {
                 var index = Expression.Constant(i);
                 var paramType = paramsInfo[i].ParameterType;
                 var paramAccessorExp = Expression.ArrayIndex(param, index);
                 var paramCastExp = Expression.Convert(paramAccessorExp, paramType);
                 argsExp[i] = paramCastExp;
             }
-            var newExp = Expression.New(ctor, argsExp);
-            var lambda = Expression.Lambda(typeof(ObjectActivator), newExp, param);
+
+            var newexp = Expression.New(ctor, argsExp);
+            var lambda = Expression.Lambda(typeof(ObjectActivator), newexp, param);
+
             return (ObjectActivator)lambda.Compile();
         }
 
@@ -38,6 +41,7 @@ namespace Sandbox {
 
         public static object CreateInstance(Type type, params object[] args) {
             var activator = (ObjectActivator)null;
+
             if(!activators.TryGetValue(type, out activator)) {
                 var constructors = type.GetConstructors();
                 if(constructors.Length == 1) {
@@ -49,10 +53,13 @@ namespace Sandbox {
                 }
 
             }
+
             return activator(args);
         }
+
         public static object CreateInstance(Type type, bool @private, params object[] args) {
             var activator = (ObjectActivator)null;
+
             if(!activators.TryGetValue(type, out activator)) {
                 var constructors = type.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic);
                 if(constructors.Length == 1) {
@@ -64,6 +71,7 @@ namespace Sandbox {
                 }
 
             }
+
             return activator(args);
         }
     }

@@ -6,13 +6,23 @@
       "Reap >= 1.0.0-alpha1",
       "Newtonsoft.Json >= 6.0.8"
     ],
-    ".NETFramework,Version=v4.5": []
+    ".NETFramework,Version=v4.5.1": []
   },
   "libraries": {
     "Newtonsoft.Json/6.0.8": {
       "serviceable": false,
       "sha": "nZX7xCBl3PXpxRCxVtVfUXn63gSzrT8aO0VB9Tp24q656IUup9EGE8SGlo0UJ9if48OacJU34ZEtKEGWIdNCzg==",
       "frameworks": {
+        ".NETFramework,Version=v4.5.1": {
+          "dependencies": {},
+          "frameworkAssemblies": [],
+          "runtimeAssemblies": [
+            "lib/net45/Newtonsoft.Json.dll"
+          ],
+          "compileAssemblies": [
+            "lib/net45/Newtonsoft.Json.dll"
+          ]
+        },
         ".NETFramework,Version=v4.5": {
           "dependencies": {},
           "frameworkAssemblies": [],

@@ -1,52 +1,17 @@
 ﻿using System;
+using Migrap.Framework.Extensions;
 
 namespace Reap {
-    public partial class Message {
-        private readonly IExtensionCollection _extensions;
-        private readonly IExtensionFactory _factory;
+    public class Message : IExtensible<Message> {
+        public IExtensionCollection<Message> Extensions => new ExtensionCollection<Message>();
 
-        public Message(IExtensionCollection extensions = null, IExtensionFactory factory = null) {
-            _extensions = extensions ?? new ExtensionCollection();
-            _factory = factory ?? new ExtensionFactory();
+        public virtual IExtension<Message> Extension(Type type, IExtension<Message> extension) {
+            Extensions[type] = extension;
+            return extension;
         }
 
-        public Message() : this(null, null) {
-        }
-
-        public IExtensionCollection Extensions {
-            get { return _extensions; }
-        }
-
-        public virtual object Extension(Type type) {
-            var value = (object)null;
-            if(false == _extensions.TryGetValue(type, out value)) {
-                value = _factory.Create(type);
-                Extension(type, value);
-            }
-            return value;
-        }
-
-        public virtual object Extension(Type type, object instance) {
-            _extensions[type] = instance;
-            return instance;
-        }
-
-        public virtual T Extension<T>() {
-            return (T)Extension(typeof(T));
-        }
-
-        public virtual T Extension<T>(T instance) {
-            return (T)Extension(typeof(T), instance);
-        }
-
-        public void Dispose() {
-            Dispose(true);
-        }
-
-        protected virtual void Dispose(bool disposing) {
-            if(disposing) {
-                _extensions.Dispose();
-            }
+        public virtual T Extension<T>(T extension) where T : IExtension<Message> {
+            return (T)Extension(typeof(T), extension);
         }
     }
 }
