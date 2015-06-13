@@ -1,123 +1,62 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Reap;
-//using Reap.Extensions.Resource;
 
 namespace Sandbox {
-    public class Program {
-        public void Main(string[] args) {
-            //var settings = new MessageSerializerSettings();
-            //settings.Converters.Add(new MessageConverter());
-            //settings.Converters.Add(new VersionConverter());
-
-            (new AccountService()).SendAsync(x => x.Create("Michael", "Checking"));
-
+    class Program {
+        static void Main(string[] args) {
             var message = new Message();
-
-            //var mood = message.Extension(x => x.Mood, x => {
-            //    x.Mood = Mood.Happy;
-            //});
-
-            var owners = Enumerable.Range(0, 3).Select(x => Guid.NewGuid().ToString()).ToArray();
-            var uuid = Guid.NewGuid().ToString();
-
-            message.Extension(x => x.Command, x => {
-                x.Uuid = "10001";
-                x.Uri = "/account";
-                x.Name = "create";
-                x.Type = "application/vnd.bacnking+json";
-                x.Data = new { owners = owners, name = "Family Checking" };
+            var headers = message.Extension(x => x.Headers);
+            var mood = message.Extension(x => x.Mood, x => {
+                x.Mood = "Happy";
+                x.Degree = 0.923;
             });
 
-            var json = (string)null;
-            //json = JsonConvert.SerializeObject(message, settings);
-
-
-
-            //var egassem = JsonConvert.DeserializeObject<Message>(json, settings);
-            //authorization = egassem.Extension(x => x.Authorization);
-            //version = egassem.Extension(x => x.Version);
-
-            //var contains = egassem.Extensions.Contains(x => x.Authentication, x => x.Jello);
+            var contains = message.Contains(x => x.Mood, x => x.Headers);
         }
     }
 
-    public interface IAccountService {
-        Task SendAsync(Message message);
-    }
+    public static partial class Extensions {
+        public static HeadersExtension Extension(this Message message, ExtensionSelector<Message, HeadersExtension> extension, Action<HeadersExtension> callback = null) {
+            return message.Extension(extension(message)(), callback);
+        }
 
-    public class AccountService : IAccountService {
-        public Task SendAsync(Message message) {
-            return Task.FromResult(1);
+        public static HeadersExtension Headers(this Message message) {
+            return new HeadersExtension();
+        }
+
+        public static MoodExtension Extension(this Message message, ExtensionSelector<Message, MoodExtension> extension, Action<MoodExtension> callback = null) {
+            return message.Extension(extension(message)(), callback);
+        }
+
+        public static MoodExtension Mood(this Message message) {
+            return new MoodExtension(message);
         }
     }
 
-    public static class AccountServiceExtensions {
-        public static void SendAsync(this IAccountService account, Expression<Action<IAccountService>> expression) {
-            var mce = (MethodCallExpression)expression.Body;
-            var parameters = mce.Method.GetParameters();
-            var arguments = mce.Arguments.ToArray();
+    public class Message : IExtensible<Message> {
+        public IExtensionCollection<Message> Extensions => new ExtensionCollection<Message>();
 
-            var data = ToDictionary(parameters.Select(x => x.Name).Skip(1), arguments.Skip(1));
-
-            var message = new Message();
-            message.Extension(x => x.Command, x => {
-                x.Uuid = Guid.NewGuid().ToString();
-                x.Uri = "/account";
-                x.Name = mce.Method.Name;
-                x.Type = "application/vnd.bacnking+json";
-                x.Data = data;
-            });
-            account.SendAsync(message);
+        public virtual IExtension<Message> Extension(Type type, IExtension<Message> extension) {
+            Extensions[type] = extension;
+            return extension;
         }
 
-        public static void Create(this IAccountService account, string name, string type) {
-        }
-
-        private static Dictionary<string, object> ToDictionary(IEnumerable<string> keys, IEnumerable<object> values) {
-            var k = keys.GetEnumerator();
-            var v = values.GetEnumerator();
-            var d = new Dictionary<string, object>();
-
-            while(k.MoveNext()) {
-                d[k.Current] = (v.MoveNext()) ? v.Current : null;
-            }
-
-            return d;
+        public virtual T Extension<T>(T extension) where T : IExtension<Message> {
+            return (T)Extension(typeof(T), extension);
         }
     }
 
-    public interface ICommandExtension {
-        string Uuid { get; set; }
-        string Uri { get; set; }
-        string Name { get; set; }
-        string Type { get; set; }
-        object Data { get; set; }
+    public class HeadersExtension : IExtension<Message> {
     }
 
-    public class CommandExtension : ICommandExtension {
-        public object Data { get; set; }
+    public class MoodExtension : IExtension<Message> {
+        private readonly Message _message;
 
-        public string Name { get; set; }
-
-        public string Type { get; set; }
-
-        public string Uri { get; set; }
-
-        public string Uuid { get; set; }
-    }
-
-    public static class CommnadExtensions {
-        public static ICommandExtension Extension(this Message message, ExtensionSelector<ICommandExtension> extension, Action<ICommandExtension> callback = null) {
-            return message.Extension<ICommandExtension>(extension, callback);
+        public MoodExtension(Message message) {
+            _message = message;
         }
 
-        public static ICommandExtension Command(this Message message) {
-            return message.Extension<ICommandExtension>(new CommandExtension());
-        }
+        public string Mood { get; set; }
+        public double Degree { get; set; }
     }
 }

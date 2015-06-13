@@ -8,5 +8,13 @@ namespace Reap {
             }
             return extension;
         }
+
+        public static TResult Extension<TSource, TResult>(this TSource source, ExtensionSelector<TSource, TResult> selector, Action<TResult> callback = null) where TSource : IExtensible<TSource> where TResult : IExtension<TSource> {
+            throw new NotImplementedException();
+        }
+
+        public static TResult Extension<TResult>(this Message message, ExtensionSelector<Message, TResult> extension, Action<TResult> callback = null) where TResult : IExtension<Message> {
+            return message.Extension(extension(message)(), callback);
+        }
     }
 }
