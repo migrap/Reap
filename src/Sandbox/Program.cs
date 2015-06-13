@@ -1,4 +1,9 @@
 ﻿using System;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Dynamic;
+using System.Text;
 using Reap;
 using Reap.Newtonsoft.Json;
 
@@ -12,20 +17,24 @@ namespace Sandbox {
                 x.Reason = "Because";
             });
 
+            var headers = message.Extension(x => x.Headers, x => {
+                x.Name = "Michael";
+                x.Count = 10;
+            });
+
             mood.Mood = "Melaonchol";
 
             mood = message.Extension(x => x.Mood, x => {
                 x.Mood = "Sad";
             });
 
-            var settings = new MessageSerializerSettings();
-
-            var json = Newtonsoft.Json.JsonConvert.SerializeObject(message, settings);
+            var json = message.Serialize(x => x.Json);
+            var buff = message.Serialize(x => x.Buff);
         }
     }
 
     public static partial class Extensions {
-        public static HeadersExtension Extension(this Message message, ExtensionSelector<Message, HeadersExtension> extension, Action<HeadersExtension> callback = null) {
+        public static HeadersExtension Extension(this Message message, ExtensionSelector<Message, HeadersExtension> extension, Action<dynamic> callback = null) {
             return message.Extensions(extension, callback);            
         }
 
@@ -40,9 +49,42 @@ namespace Sandbox {
         public static MoodExtension Mood(this Message message) {
             return new MoodExtension(message);
         }
+
+        public static string Serialize(this Message message, Func<Message,Func<string>> serializer) {
+            return serializer(message)();
+        }
+
+        public static byte[] Serialize(this Message message, Func<Message, Func<byte[]>> serializer) {
+            return serializer(message)();
+        }
+
+        public static string Json(this Message message) {
+            var settings = new MessageSerializerSettings();
+            return  Newtonsoft.Json.JsonConvert.SerializeObject(message, settings);
+        }
+
+        public static byte[] Buff(this Message message) {
+            var settings = new MessageSerializerSettings();
+            var json= Newtonsoft.Json.JsonConvert.SerializeObject(message, settings);
+            return Encoding.UTF8.GetBytes(json);
+        }
     }
 
-    public class HeadersExtension : IExtension<Message> {
+    public class HeadersExtension : DynamicObject, IExtension<Message> {
+        private ConcurrentDictionary<string, object> _headers = new ConcurrentDictionary<string, object>();
+
+        public override bool TryGetMember(GetMemberBinder binder, out object result) {
+            return _headers.TryGetValue(binder.Name, out result);
+        }
+
+        public override bool TrySetMember(SetMemberBinder binder, object value) {
+            _headers.AddOrUpdate(binder.Name, value, (x, y) => value);
+            return true;
+        }
+
+        public override IEnumerable<string> GetDynamicMemberNames() {
+            return _headers.Keys;
+        }
     }
 
     public class MoodExtension : IExtension<Message> {
