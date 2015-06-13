@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Migrap.Framework.Extensions {
+namespace Reap {
     public class ExtensionCollection<T> : IExtensionCollection<T> where T : IExtensible<T> {
         private readonly IExtensionCollection<T> _defaults;
         private readonly Dictionary<Type, IExtension<T>> _bytype = new Dictionary<Type, IExtension<T>>(TypeComparer.Default);

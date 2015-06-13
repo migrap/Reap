@@ -1,4 +1,4 @@
-﻿namespace Migrap.Framework.Extensions {
+﻿namespace Reap {
     public interface IExtension<T> where T : IExtensible<T> {
     }
 }

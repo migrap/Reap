@@ -32,16 +32,6 @@
           "compileAssemblies": [
             "lib/net45/Newtonsoft.Json.dll"
           ]
-        },
-        "DNX,Version=v4.5.1": {
-          "dependencies": {},
-          "frameworkAssemblies": [],
-          "runtimeAssemblies": [
-            "lib/net45/Newtonsoft.Json.dll"
-          ],
-          "compileAssemblies": [
-            "lib/net45/Newtonsoft.Json.dll"
-          ]
         }
       },
       "files": [

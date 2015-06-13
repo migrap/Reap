@@ -1,11 +1,12 @@
-﻿using System;
+﻿#if REAP_LATER
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Migrap.Framework.Extensions {
-    internal static class FastActivator {
+namespace Reap {
+    internal static class Activator {
         private static readonly ConcurrentDictionary<Type, ObjectActivator> activators = new ConcurrentDictionary<Type, ObjectActivator>();
 
         public delegate object ObjectActivator(params object[] args);
@@ -76,3 +77,4 @@ namespace Migrap.Framework.Extensions {
         }
     }
 }
+#endif
