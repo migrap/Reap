@@ -20,7 +20,7 @@ namespace Reap.Newtonsoft.Json {
                     name = reader.Value.ToString();
                 } else if(reader.TokenType != JsonToken.EndObject) {
                     var extension = _extensions.First(x => name.Equals(x.Name, StringComparison.OrdinalIgnoreCase));
-                    var value = serializer.Deserialize(reader, extension.Type);
+                    var value = serializer.Deserialize(reader, extension.Type) as IExtension<Message>;
                     message.Extension(extension.Type ?? value.GetType(), value);
                 }
             }

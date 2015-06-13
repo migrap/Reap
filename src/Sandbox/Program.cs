@@ -1,23 +1,32 @@
 ﻿using System;
 using Reap;
+using Reap.Newtonsoft.Json;
 
 namespace Sandbox {
     class Program {
         static void Main(string[] args) {
-            var message = new Message();
-            var headers = message.Extension(x => x.Headers);
+            var message = new Message();            
             var mood = message.Extension(x => x.Mood, x => {
                 x.Mood = "Happy";
                 x.Degree = 0.923;
+                x.Reason = "Because";
             });
 
-            var contains = message.Contains(x => x.Mood, x => x.Headers);
+            mood.Mood = "Melaonchol";
+
+            mood = message.Extension(x => x.Mood, x => {
+                x.Mood = "Sad";
+            });
+
+            var settings = new MessageSerializerSettings();
+
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(message, settings);
         }
     }
 
     public static partial class Extensions {
         public static HeadersExtension Extension(this Message message, ExtensionSelector<Message, HeadersExtension> extension, Action<HeadersExtension> callback = null) {
-            return message.Extension(extension(message)(), callback);
+            return message.Extensions(extension, callback);            
         }
 
         public static HeadersExtension Headers(this Message message) {
@@ -25,24 +34,11 @@ namespace Sandbox {
         }
 
         public static MoodExtension Extension(this Message message, ExtensionSelector<Message, MoodExtension> extension, Action<MoodExtension> callback = null) {
-            return message.Extension(extension(message)(), callback);
+            return message.Extensions(extension, callback);            
         }
 
         public static MoodExtension Mood(this Message message) {
             return new MoodExtension(message);
-        }
-    }
-
-    public class Message : IExtensible<Message> {
-        public IExtensionCollection<Message> Extensions => new ExtensionCollection<Message>();
-
-        public virtual IExtension<Message> Extension(Type type, IExtension<Message> extension) {
-            Extensions[type] = extension;
-            return extension;
-        }
-
-        public virtual T Extension<T>(T extension) where T : IExtension<Message> {
-            return (T)Extension(typeof(T), extension);
         }
     }
 
@@ -57,6 +53,7 @@ namespace Sandbox {
         }
 
         public string Mood { get; set; }
+        public string Reason { get; set; }
         public double Degree { get; set; }
     }
 }

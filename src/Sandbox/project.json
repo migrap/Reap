@@ -7,7 +7,9 @@
   "licenseUrl": "",
 
   "dependencies": {
-    "Reap": "1.0.0-alpha1"
+    "Reap": "",
+    "Newtonsoft.Json": "7.0.1-beta3",
+    "Reap.Newtonsoft.Json": ""
   },
 
   "commands": {
@@ -15,7 +17,6 @@
   },
 
   "frameworks": {
-    "net45": { },
     "dnx451": { }
   }
 }

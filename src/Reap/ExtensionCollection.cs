@@ -19,6 +19,10 @@ namespace Reap {
             _defaults = defaults;
         }
 
+        public virtual int Revision {
+            get { return _revision; }
+        }
+
         public object GetInterface() {
             return GetInterface(null);
         }
@@ -74,11 +78,7 @@ namespace Reap {
 
                 Interlocked.Increment(ref _revision);
             }
-        }
-
-        public virtual int Revision {
-            get { return _revision; }
-        }
+        }        
 
         protected virtual void Dispose(bool disposing) {
             if(!_disposed) {
