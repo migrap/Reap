@@ -1,23 +1,23 @@
 ﻿using System;
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Text;
+using Newtonsoft.Json;
 using Reap;
 using Reap.Newtonsoft.Json;
 
 namespace Sandbox {
     class Program {
         static void Main(string[] args) {
-            var message = new Message();            
+            var message = new Message();
             var mood = message.Extension(x => x.Mood, x => {
                 x.Mood = "Happy";
                 x.Degree = 0.923;
                 x.Reason = "Because";
             });
 
-            var headers = message.Extension(x => x.Headers, x => {
+            message.Extension(x => x.Headers, x => {
                 x.Name = "Michael";
                 x.Count = 10;
             });
@@ -29,7 +29,13 @@ namespace Sandbox {
             });
 
             var json = message.Serialize(x => x.Json);
-            var buff = message.Serialize(x => x.Buff);
+
+            var settings = new MessageSerializerSettings();
+            message = JsonConvert.DeserializeObject<Message>(json, settings);
+
+            var headers = (dynamic)message.Extension(x => x.Headers);
+            var name = headers.Name;
+            var count = headers.Count;
         }
     }
 
@@ -53,14 +59,14 @@ namespace Sandbox {
         public static string Serialize(this Message message, Func<Message,Func<string>> serializer) {
             return serializer(message)();
         }
-
+        
         public static byte[] Serialize(this Message message, Func<Message, Func<byte[]>> serializer) {
             return serializer(message)();
         }
 
         public static string Json(this Message message) {
             var settings = new MessageSerializerSettings();
-            return  Newtonsoft.Json.JsonConvert.SerializeObject(message, settings);
+            return  JsonConvert.SerializeObject(message, settings);
         }
 
         public static byte[] Buff(this Message message) {
@@ -71,7 +77,7 @@ namespace Sandbox {
     }
 
     public class HeadersExtension : DynamicObject, IExtension<Message> {
-        private ConcurrentDictionary<string, object> _headers = new ConcurrentDictionary<string, object>();
+        private ConcurrentDictionary<string, object> _headers = new ConcurrentDictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
         public override bool TryGetMember(GetMemberBinder binder, out object result) {
             return _headers.TryGetValue(binder.Name, out result);
