@@ -1,5 +1,4 @@
 ﻿using System;
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -10,7 +9,7 @@ using Reap.Newtonsoft.Json;
 namespace Sandbox {
     class Program {
         static void Main(string[] args) {
-            var message = new Message();            
+            var message = new Message();
             var mood = message.Extension(x => x.Mood, x => {
                 x.Mood = "Happy";
                 x.Degree = 0.923;
@@ -22,20 +21,27 @@ namespace Sandbox {
                 x.Count = 10;
             });
 
+            (headers as dynamic).Age = 37;
+
             mood.Mood = "Melaonchol";
 
             mood = message.Extension(x => x.Mood, x => {
                 x.Mood = "Sad";
             });
 
+            message.Extension(x => x.Message, x => {
+                x.Extension(xx => xx.Mood, xx => {
+                    xx.Mood = "Happy";
+                });
+            });
+
             var json = message.Serialize(x => x.Json);
-            var buff = message.Serialize(x => x.Buff);
         }
     }
 
     public static partial class Extensions {
         public static HeadersExtension Extension(this Message message, ExtensionSelector<Message, HeadersExtension> extension, Action<dynamic> callback = null) {
-            return message.Extensions(extension, callback);            
+            return message.Extensions(extension, callback);
         }
 
         public static HeadersExtension Headers(this Message message) {
@@ -43,14 +49,22 @@ namespace Sandbox {
         }
 
         public static MoodExtension Extension(this Message message, ExtensionSelector<Message, MoodExtension> extension, Action<MoodExtension> callback = null) {
-            return message.Extensions(extension, callback);            
+            return message.Extensions(extension, callback);
+        }
+
+        public static MessageExtension Extension(this Message message, ExtensionSelector<Message, MessageExtension> extension, Action<MessageExtension> callback = null) {
+            return message.Extensions(extension, callback);
         }
 
         public static MoodExtension Mood(this Message message) {
             return new MoodExtension(message);
         }
 
-        public static string Serialize(this Message message, Func<Message,Func<string>> serializer) {
+        public static MessageExtension Message(this Message message) {
+            return new MessageExtension();
+        }
+
+        public static string Serialize(this Message message, Func<Message, Func<string>> serializer) {
             return serializer(message)();
         }
 
@@ -60,12 +74,12 @@ namespace Sandbox {
 
         public static string Json(this Message message) {
             var settings = new MessageSerializerSettings();
-            return  Newtonsoft.Json.JsonConvert.SerializeObject(message, settings);
+            return Newtonsoft.Json.JsonConvert.SerializeObject(message, settings);
         }
 
         public static byte[] Buff(this Message message) {
             var settings = new MessageSerializerSettings();
-            var json= Newtonsoft.Json.JsonConvert.SerializeObject(message, settings);
+            var json = Newtonsoft.Json.JsonConvert.SerializeObject(message, settings);
             return Encoding.UTF8.GetBytes(json);
         }
     }
@@ -97,5 +111,5 @@ namespace Sandbox {
         public string Mood { get; set; }
         public string Reason { get; set; }
         public double Degree { get; set; }
-    }
+    }    
 }
