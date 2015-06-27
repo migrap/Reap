@@ -9,8 +9,6 @@ namespace Reap.Newtonsoft.Json {
         protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization) {
             var property = base.CreateProperty(member, memberSerialization);
 
-            System.Diagnostics.Trace.WriteLine(property.PropertyType);
-
             if(typeof(Message).IsAssignableFrom(property.DeclaringType) && typeof(IExtensionCollection<Message>).IsAssignableFrom(property.PropertyType)) {
                 property.ShouldSerialize = instance => false;
             }
