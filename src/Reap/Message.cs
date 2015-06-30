@@ -9,8 +9,6 @@ namespace Reap {
             return extension;
         }
 
-        public virtual T Extension<T>(T extension) where T : IExtension<Message> {
-            return (T)Extension(typeof(T), extension);
-        }
+        public virtual T Extension<T>(T extension) where T : IExtension<Message> => (T)Extension(typeof(T), extension);
     }
 }

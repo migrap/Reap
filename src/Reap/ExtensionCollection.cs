@@ -19,13 +19,17 @@ namespace Reap {
             _defaults = defaults;
         }
 
-        public virtual int Revision {
-            get { return _revision; }
-        }
+        public virtual int Revision => _revision;
 
-        public object GetInterface() {
-            return GetInterface(null);
-        }
+        public int Count => _byname.Count;
+
+        public bool IsReadOnly => false;
+
+        public ICollection<Type> Keys => _bytype.Keys;
+
+        public ICollection<IExtension<T>> Values => _bytype.Values;
+
+        public object GetInterface() => GetInterface(null);
 
         public IExtension<T> GetInterface(Type type) {
             var extension = (IExtension<T>)null;
@@ -78,7 +82,7 @@ namespace Reap {
 
                 Interlocked.Increment(ref _revision);
             }
-        }        
+        }
 
         protected virtual void Dispose(bool disposing) {
             if(!_disposed) {
@@ -88,56 +92,31 @@ namespace Reap {
             }
         }
 
-        public void Dispose() {
-            Dispose(true);
-        }
+        public void Dispose() => Dispose(true);
 
-        public IEnumerator<KeyValuePair<Type, IExtension<T>>> GetEnumerator() {
-            return _bytype.GetEnumerator();
-        }
+        public IEnumerator<KeyValuePair<Type, IExtension<T>>> GetEnumerator() => _bytype.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() {
-            return GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        public void Add(KeyValuePair<Type, IExtension<T>> item) {
-            SetInterface(item.Key, item.Value);
-        }
+        public void Add(KeyValuePair<Type, IExtension<T>> item) => SetInterface(item.Key, item.Value);
 
-        public void Clear() {
-            throw new NotImplementedException();
-        }
+        public void Clear() { }
 
         public bool Contains(KeyValuePair<Type, IExtension<T>> item) {
             var value = (IExtension<T>)null;
             return TryGetValue(item.Key, out value) && Equals(item.Value, value);
         }
 
-        public void CopyTo(KeyValuePair<Type, IExtension<T>>[] array, int arrayIndex) {
-            throw new NotImplementedException();
-        }
+        public void CopyTo(KeyValuePair<Type, IExtension<T>>[] array, int arrayIndex) { }
 
-        public bool Remove(KeyValuePair<Type, IExtension<T>> item) {
-            return Contains(item) && Remove(item.Key);
-        }
-
-        public int Count {
-            get { throw new NotImplementedException(); }
-        }
-
-        public bool IsReadOnly {
-            get { return false; }
-        }
-
-        public bool ContainsKey(Type key) {
-            return GetInterface(key) != null;
-        }
+        public bool Remove(KeyValuePair<Type, IExtension<T>> item) => Contains(item) && Remove(item.Key);
+        
+        public bool ContainsKey(Type key) => GetInterface(key) != null;
 
         public void Add(Type key, IExtension<T> value) {
             if(ContainsKey(key)) {
                 throw new ArgumentException();
             }
-
             SetInterface(key, value);
         }
 
@@ -162,14 +141,6 @@ namespace Reap {
         public IExtension<T> this[Type key] {
             get { return GetInterface(key); }
             set { SetInterface(key, value); }
-        }
-
-        public ICollection<Type> Keys {
-            get { return _bytype.Keys; }
-        }
-
-        public ICollection<IExtension<T>> Values {
-            get { return _bytype.Values; }
         }
 
         private class TypeComparer : IEqualityComparer<Type> {
