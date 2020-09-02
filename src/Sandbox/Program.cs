@@ -111,5 +111,5 @@ namespace Sandbox {
         public string Mood { get; set; }
         public string Reason { get; set; }
         public double Degree { get; set; }
-    }    
+    }
 }
